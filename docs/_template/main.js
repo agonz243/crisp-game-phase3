@@ -10,6 +10,11 @@ characters = [
 llccll
   cc
 ll  ll
+`,`
+   L  
+  LLL
+ LLLLL
+LLLLLLL
 `
 ];
 
@@ -88,6 +93,24 @@ function update() {
 	else if (radius > G.MINIMUM_RADIUS) {
 		radius -= G.GROWTH_RATE;
 	}
+	color("light_black");
+	char("b", 4, 98);
+	char("b", 10, 98);
+	char("b", 16, 98);
+	char("b", 22, 98);
+	char("b", 28, 98);
+	char("b", 34, 98);
+	char("b", 40, 98);
+	char("b", 46, 98);
+	char("b", 52, 98);
+	char("b", 58, 98);
+	char("b", 64, 98);
+	char("b", 70, 98);
+	char("b", 76, 98);
+	char("b", 82, 98);
+	char("b", 88, 98);
+	char("b", 94, 98);
+	char("b", 100, 98);
 }
 
 
