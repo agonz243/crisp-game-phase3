@@ -18,7 +18,9 @@ const G = {
 	HEIGHT: 100,
 	MINIMUM_RADIUS: 8,
 	FALL_SPEED: 0.1,
-	RISE_SPEED: 0.4
+	RISE_SPEED: 0.4,
+	GROWTH_RATE: 0.1,
+	MAX_RADIUS: 13
 }
 
 options = {
@@ -41,6 +43,12 @@ options = {
  */
 let player;
 
+// Define bubble radius
+/**
+ * @type { number }
+ */
+ let radius;
+
 
 function update() {
 	/**----------Init function START!----------**/
@@ -51,6 +59,9 @@ function update() {
 			pos: vec(20, G.HEIGHT - 50),
 			isRising: false
 		}
+
+		// Init radius
+		radius = G.MINIMUM_RADIUS;
 	}
 
 	/**----------Update function START!----------**/
@@ -58,16 +69,23 @@ function update() {
 	// Draw player
 	color("black");
 	char('a', player.pos);
+	// Keep player on screen
+	player.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
 
 	// Draw circle around player
 	color("light_cyan");
-	arc(player.pos.x, player.pos.y, G.MINIMUM_RADIUS, 1, 0 , 360);
+	arc(player.pos.x, player.pos.y, radius, 1, 0 , 360);
 
 	// Make player constantly fall towards the bottom of the screen
 	player.pos.y += G.FALL_SPEED;
 
-	// If mouse click is held, player rises
-	if (pointer.isPressed) {
+	// If mouse click is held, player rises and bubble grows
+	if (pointer.isPressed && radius < G.MAX_RADIUS) {
 		player.pos.y -= G.RISE_SPEED;
+		radius += G.GROWTH_RATE;
+	}
+	// If button is not held, deflate bubble
+	else if (radius > G.MINIMUM_RADIUS) {
+		radius -= G.GROWTH_RATE;
 	}
 }
