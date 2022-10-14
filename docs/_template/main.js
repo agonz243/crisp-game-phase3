@@ -54,7 +54,6 @@ let player;
  */
  let radius;
 
-
 function update() {
 	/**----------Init function START!----------**/
 
@@ -96,8 +95,6 @@ function update() {
 	color("light_black");
 	char("b", 4, 98);
 	char("b", 10, 98);
-	char("b", 16, 98);
-	char("b", 22, 98);
 	char("b", 28, 98);
 	char("b", 34, 98);
 	char("b", 40, 98);
@@ -111,6 +108,17 @@ function update() {
 	char("b", 88, 98);
 	char("b", 94, 98);
 	char("b", 100, 98);
+
+	const isCollidingWithPlayer = char("b", 16, 98).isColliding.char.a;
+	if (isCollidingWithPlayer) {
+		end();
+		play("powerUp");
+	}
+	const isCollidingWithPlayer2 = char("b", 22, 98).isColliding.char.a;
+	if (isCollidingWithPlayer2) {
+		end();
+		play("powerUp");
+	}
 }
 
 
