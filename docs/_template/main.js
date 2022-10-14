@@ -15,6 +15,11 @@ ll  ll
   LLL
  LLLLL
 LLLLLLL
+
+`, `
+rrrrr
+rrrrr
+rrrrr
 `
 ];
 
@@ -53,11 +58,23 @@ let player;
  * @type { number }
  */
  let radius;
+ 
+
+// define enemies
+ let enemies;
+ let nextEnemies;
+ 
+ //define bubble
+let bubble;
+
 
 function update() {
 	/**----------Init function START!----------**/
 
 	if (!ticks) {
+		// init enemies
+		enemies = [];
+		nextEnemies = 99;
 		// Init player
 		player = {
 			pos: vec(20, G.HEIGHT - 50),
@@ -66,7 +83,10 @@ function update() {
 
 		// Init radius
 		radius = G.MINIMUM_RADIUS;
+
 	}
+	//create a difficulty aspect
+	const scr = sqrt(difficulty);
 
 	/**----------Update function START!----------**/
 
@@ -78,7 +98,7 @@ function update() {
 
 	// Draw circle around player
 	color("light_cyan");
-	arc(player.pos.x, player.pos.y, radius, 1, 0 , 360);
+	bubble = arc(player.pos.x, player.pos.y, radius, 1, 0 , 360);
 
 	// Make player constantly fall towards the bottom of the screen
 	player.pos.y += G.FALL_SPEED;
@@ -92,6 +112,7 @@ function update() {
 	else if (radius > G.MINIMUM_RADIUS) {
 		radius -= G.GROWTH_RATE;
 	}
+  
 	color("light_black");
 	char("b", 4, 98);
 	char("b", 10, 98);
@@ -121,8 +142,23 @@ function update() {
 	}
 }
 
+	// enemy spawner
+	nextEnemies -= scr;
+	if (nextEnemies < 0) {
+		enemies.push({pos: vec(105,rnd(5,95)), vx: rnd(2, difficulty) * 0.3});
+		nextEnemies += rnd(100, 110) / sqrt(difficulty);
+	};
+	color("black");
+	remove(enemies, (a) => {
+		a.pos.x -= a.vx +scr;
+		const e = char("b", a.pos).isColliding.char;
+		addScore(1);
+		if (e.a || e.a) {
+			play("explosion");
+			end();
+			return true;
+		}
+		return a.pos.x <-3;
+	});
 
-
-
-
-// This is a test for the branch stuff!
+}
