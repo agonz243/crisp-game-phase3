@@ -30,7 +30,8 @@ const G = {
 	FALL_SPEED: 0.1,
 	RISE_SPEED: 0.4,
 	GROWTH_RATE: 0.1,
-	MAX_RADIUS: 13
+	MAX_RADIUS: 13,
+	ROTATE_SPEED: 0.05
 }
 
 options = {
@@ -44,7 +45,8 @@ options = {
 /**
  * @typedef {{
  * pos: Vector
- * isRising: boolean
+ * isRising: boolean,
+ * rotation: number
  * }} Player
  */
 
@@ -64,8 +66,11 @@ let player;
  let enemies;
  let nextEnemies;
  
- //define bubble
+ // Define bubble
 let bubble;
+
+// Define spike positions
+let spike_pos;
 
 
 function update() {
@@ -78,11 +83,15 @@ function update() {
 		// Init player
 		player = {
 			pos: vec(20, G.HEIGHT - 50),
-			isRising: false
+			isRising: false,
+			rotation: G.ROTATE_SPEED
 		}
 
 		// Init radius
 		radius = G.MINIMUM_RADIUS;
+
+		// Init spike positions
+		spike_pos = [4, 10, 28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 100];
 
 	}
 	//create a difficulty aspect
@@ -92,7 +101,8 @@ function update() {
 
 	// Draw player
 	color("black");
-	char('a', player.pos);
+	player.rotation += G.ROTATE_SPEED;
+	char('a', player.pos, {rotation: player.rotation});
 	// Keep player on screen
 	player.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
 
@@ -113,52 +123,44 @@ function update() {
 		radius -= G.GROWTH_RATE;
 	}
   
+	// Draw spikes at defined positions
 	color("light_black");
-	char("b", 4, 98);
-	char("b", 10, 98);
-	char("b", 28, 98);
-	char("b", 34, 98);
-	char("b", 40, 98);
-	char("b", 46, 98);
-	char("b", 52, 98);
-	char("b", 58, 98);
-	char("b", 64, 98);
-	char("b", 70, 98);
-	char("b", 76, 98);
-	char("b", 82, 98);
-	char("b", 88, 98);
-	char("b", 94, 98);
-	char("b", 100, 98);
+	for (let i = 0; i < spike_pos.length; i++) {
+		char("b", spike_pos[i], 98);
+	}
 
-	const isCollidingWithPlayer = char("b", 16, 98).isColliding.char.a;
+	// Check to see if player hits spikes
+	const isCollidingWithPlayer = char("b", 16, 98).isColliding.rect.light_cyan;
 	if (isCollidingWithPlayer) {
 		end();
 		play("powerUp");
 	}
-	const isCollidingWithPlayer2 = char("b", 22, 98).isColliding.char.a;
+
+	// Check to see if player hits enemy
+	const isCollidingWithPlayer2 = char("b", 22, 98).isColliding.rect.light_cyan;
 	if (isCollidingWithPlayer2) {
 		end();
 		play("powerUp");
 	}
-}
 
 	// enemy spawner
 	nextEnemies -= scr;
 	if (nextEnemies < 0) {
 		enemies.push({pos: vec(105,rnd(5,95)), vx: rnd(2, difficulty) * 0.3});
-		nextEnemies += rnd(100, 110) / sqrt(difficulty);
+		nextEnemies += rnd(20, 30) / sqrt(difficulty);
 	};
 	color("black");
 	remove(enemies, (a) => {
 		a.pos.x -= a.vx +scr;
-		const e = char("b", a.pos).isColliding.char;
+
+		// If bubble collides with enemy, gamer over!
+		const isCollidingWithEnemy = char("c", a.pos).isColliding.rect.light_cyan;
 		addScore(1);
-		if (e.a || e.a) {
+		if (isCollidingWithEnemy) {
 			play("explosion");
 			end();
 			return true;
 		}
 		return a.pos.x <-3;
 	});
-
 }
