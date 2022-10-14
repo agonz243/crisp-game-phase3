@@ -52,12 +52,18 @@ let player;
  * @type { number }
  */
  let radius;
+// define enimies
+ let enemies;
+ let nextEnemies;
 
 
 function update() {
 	/**----------Init function START!----------**/
 
 	if (!ticks) {
+		// init enemies
+		enemies = [];
+		nextEnemies = 99;
 		// Init player
 		player = {
 			pos: vec(20, G.HEIGHT - 50),
@@ -66,7 +72,10 @@ function update() {
 
 		// Init radius
 		radius = G.MINIMUM_RADIUS;
+
 	}
+	//create a difficulty aspect
+	const scr = sqrt(difficulty);
 
 	/**----------Update function START!----------**/
 
@@ -92,4 +101,23 @@ function update() {
 	else if (radius > G.MINIMUM_RADIUS) {
 		radius -= G.GROWTH_RATE;
 	}
+	// enemy spawner
+	nextEnemies -= scr;
+	if (nextEnemies < 0) {
+		enemies.push({pos: vec(105,rnd(0,100)), vx: rnd(2, difficulty) * 0.3});
+		nextEnemies += rnd(100, 110) / sqrt(difficulty);
+	};
+	color("black");
+	remove(enemies, (a) => {
+		a.pos.x -= a.vx +scr;
+		const e = char("b", a.pos).isColliding.char;
+		//addScore(1);
+		if (e.a || e.a) {
+			play("explosion");
+			end();
+			return true;
+		}
+		return a.pos.x <-3;
+	});
+
 }
